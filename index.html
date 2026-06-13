@@ -1232,7 +1232,7 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
 }
 </style>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz48cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iMTI0IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyIiByeD0iMiIgZmlsbD0iIzZCNkI2QiIvPjwvc3ZnPgo=">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz48cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iMTI0IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyIiByeD0iMiIgZmlsbD0iIzZCNkI2QiIvPjwvc3ZnPg==">
 
 </head>
 <body>
@@ -1347,7 +1347,7 @@ console.log('%c━━━━━━━━━━━━━━━━━━━━━�
 // Version Check
 // ============================================================
 (function(){
-  var v='v3.1-blue';
+  var v='v3.2-always-show';
   if(sessionStorage.getItem('_ver')!==v){
     sessionStorage.setItem('_ver',v);
     location.reload(true);
@@ -2866,8 +2866,7 @@ function promptInstall() {
     return;
   }
 
-  // 没有原生事件 → 首次弹指导，之后静默
-  if (localStorage.getItem('_install_shown')) return;
+  // 没有原生事件 → 每次都弹安装指引
   showInstallGuide();
 }
 
@@ -2877,9 +2876,6 @@ function promptInstall() {
 function showInstallGuide() {
   var old = document.getElementById('installGuide');
   if (old) old.remove();
-
-  // 记死：弹过一次就不再弹
-  localStorage.setItem('_install_shown', '1');
 
   var ua = navigator.userAgent;
   var isIOS = /iPhone|iPad|iPod/.test(ua);
