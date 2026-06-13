@@ -34,7 +34,7 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
-      return fetch(e.request).then((resp) => {
+      return fetch(e.request).then(function(resp) { if (resp.ok) { var clone = resp.clone(); caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); }); } return resp; }).then((resp) => {
         if (resp.ok && resp.type === 'basic') {
           const clone = resp.clone();
           caches.open(CACHE_NAME).then((c) => c.put(e.request, clone));
