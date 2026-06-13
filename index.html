@@ -983,13 +983,12 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
 }
 .date-nav-label input {
   font-family: var(--font-mono); font-size: var(--text-base); font-weight: 600;
-  text-align: center; color: var(--ink);
-  width: 155px; padding: var(--space-1);
+  text-align: left; color: var(--ink);
+  width: 175px; padding: var(--space-1) 4px;
   border-bottom: 1px dashed var(--line);
   border-radius: 0;
 }
-.date-nav-label input::-webkit-calendar-picker-indicator { display: none; }
-.date-nav-label input::-webkit-datetime-edit { text-align: center; padding: 0; }
+.date-nav-label input::-webkit-datetime-edit { padding: 0 4px; }
 .date-weekday {
   font-family: var(--font-sans); font-size: var(--text-sm); font-weight: 500;
   color: var(--ink-dim); white-space: nowrap;
