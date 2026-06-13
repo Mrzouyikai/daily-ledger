@@ -2835,7 +2835,7 @@ if (!_isStandalone && !sessionStorage.getItem('_guide_auto')) {
 }
 
 // ═══════════════════════════════════════════════════
-// 核心：点击安装 → 仅弹一次，绝不骚扰
+// 核心：点击安装 → 优先原生安装 → 兜底指导
 // ═══════════════════════════════════════════════════
 function promptInstall() {
   // 已安装 → 提示
@@ -2844,7 +2844,26 @@ function promptInstall() {
     return;
   }
 
-  // 无论如何都弹指引——不依赖 beforeinstallprompt
+  // 有原生事件 → 直接弹系统安装窗口
+  if (deferredPrompt) {
+    deferredPrompt.prompt().then(function(r) {
+      if (r.outcome === 'accepted') {
+        if (installBtn) {
+          installBtn.textContent = '✅ 已安装';
+          installBtn.style.borderColor = '';
+          installBtn.style.color = '';
+          installBtn.style.opacity = '0.5';
+          installBtn.style.cursor = 'default';
+        }
+        var guide = document.getElementById('installGuide');
+        if (guide) guide.classList.remove('show');
+      }
+    }).catch(function(){});
+    deferredPrompt = null;
+    return;
+  }
+
+  // 无原生事件 → 弹安装指导（每次点击都弹，不静默）
   try { showInstallGuide(); } catch(e) {
     alert('💻 Chrome/Edge：地址栏点 ⊕ 安装\n📱 Safari：分享 → 添加到主屏幕');
   }

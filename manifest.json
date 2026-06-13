@@ -1,9 +1,8 @@
 {
   "name": "每日对账 · 热敏小票",
   "short_name": "每日对账",
-  "id": "/",
-  "scope": "./",
-  "start_url": "./",
+  "scope": "/daily-ledger/",
+  "start_url": "/daily-ledger/",
   "display": "standalone",
   "background_color": "#F4F1EA",
   "theme_color": "#F4F1EA",
