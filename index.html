@@ -2758,43 +2758,36 @@ function updateHeaderDate() {
 
 // ============================================================
 // ============================================================
-// PHASE 4: PWA - Install button, native dialog only
-var dp = null;
+// PHASE 4: Download — 各系统下载方案
 var ib = document.getElementById('btnInstall');
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(r) {
-    r.update();
-    if (r.installing) {
-      r.installing.addEventListener('statechange', function() {
-        if (r.installing.state === 'activated') window.location.reload();
-      });
-    }
-    r.addEventListener('updatefound', function() {
-      if (r.installing) {
-        r.installing.addEventListener('statechange', function() {
-          if (r.installing.state === 'activated') window.location.reload();
-        });
-      }
-    });
-  }).catch(function(){});
-  caches.keys().then(function(k) { return Promise.all(k.filter(function(x) { return x !== 'daily-recon-v6'; }).map(function(x) { return caches.delete(x); })); }).catch(function(){});
-}
 
 if (ib && window.matchMedia('(display-mode: standalone)').matches) ib.style.display = 'none';
 window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) { if (ib) ib.style.display = e.matches ? 'none' : ''; });
 
-window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); dp = e; });
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(r) { r.update(); }).catch(function(){});
+  caches.keys().then(function(k) { return Promise.all(k.filter(function(x) { return x !== 'daily-recon-v6'; }).map(function(x) { return caches.delete(x); })); }).catch(function(){});
+}
+
 window.addEventListener('appinstalled', function() { if (ib) ib.style.display = 'none'; });
 
 function promptInstall() {
-  if (dp) { dp.prompt(); return; }
-  var c = 0;
-  var t = setInterval(function() {
-    c++;
-    if (dp) { clearInterval(t); dp.prompt(); }
-    if (c > 100) { clearInterval(t); }
-  }, 200);
+  var ua = navigator.userAgent, dl = 'https://raw.githubusercontent.com/mrzouyikai/daily-ledger/main/daily-ledger.zip';
+  
+  if (ua.indexOf('Windows') >= 0) {
+    var a = document.createElement('a'); a.href = dl; a.download = 'daily-ledger.zip'; a.click();
+    toast('✅ 已下载！解压后双击「启动服务器.bat」即可运行');
+  } else if (ua.indexOf('Mac') >= 0) {
+    var a = document.createElement('a'); a.href = dl; a.download = 'daily-ledger.zip'; a.click();
+    toast('✅ 已下载！解压后终端运行 python3 server.py');
+  } else if (/iPhone|iPad|iPod/i.test(ua)) {
+    toast('📱 点 Safari分享按钮 → 「添加到主屏幕」');
+  } else if (ua.indexOf('Android') >= 0) {
+    toast('📱 点 Chrome菜单 → 「安装应用」');
+  } else {
+    var a = document.createElement('a'); a.href = dl; a.download = 'daily-ledger.zip'; a.click();
+    toast('✅ 已下载！');
+  }
 }// PHASE 5.2: Keyboard Shortcuts
 // ============================================================
 var tabOrder = ['today','month','summary','inventory','settings'];
