@@ -2801,7 +2801,13 @@ if (_isStandalone && installBtn) {
 
 // ── SW ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function(){});
+  navigator.serviceWorker.register('./sw.js', { scope: '/daily-ledger/' }).then(function(reg) {
+    console.log('🧾 SW registered:', reg.scope);
+    // Force update to latest version
+    reg.update();
+  }).catch(function(err) {
+    console.error('SW registration failed:', err);
+  });
 }
 
 // ── 捕获 beforeinstallprompt（可能触发，可能不）──
