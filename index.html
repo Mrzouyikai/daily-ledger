@@ -1079,6 +1079,32 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
 }
 
 /* ============================================================
+   PHASE 4: Install Guide Modal — 安装指导弹窗（兜底保证弹窗）
+   ============================================================ */
+.install-guide-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center;
+  padding: var(--space-4);
+}
+.install-guide-overlay.show { display: flex; }
+.install-guide-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: var(--space-6);
+  max-width: 380px; width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: fadeScale 200ms var(--ease-spring) forwards;
+}
+.install-guide-close-btn {
+  position: absolute; top: var(--space-3); right: var(--space-3);
+  font-size: var(--text-base); color: var(--ink-faint);
+  padding: 4px 8px; border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.install-guide-close-btn:hover { color: var(--ink); }
+
+/* ============================================================
    PHASE 5.2: Keyboard Shortcuts Panel
    ============================================================ */
 .kb-overlay {
@@ -1205,20 +1231,8 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
   .cal-profit { font-size: 10px; }
 }
 </style>
-<script>
-(function(){
-  var r=Math.random().toString(36).slice(2,8);
-  var icon='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz48cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48dGV4dCB4PSI5NiIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyRDJEMkQiPuiusDwvdGV4dD48L3N2Zz4=';
-  var m={name:"每日对账 · 热敏小票",short_name:"每日对账",start_url:"./?r='+r+'",display:"standalone",background_color:"#F4F1EA",theme_color:"#F4F1EA",icons:[{src:icon,sizes:"192x192",type:"image/svg+xml"}]};
-  var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
-  var link=document.createElement("link");
-  link.rel="manifest";link.href=URL.createObjectURL(blob);
-  document.head.appendChild(link);
-  var iconLink=document.createElement("link");
-  iconLink.rel="apple-touch-icon";iconLink.href=icon;
-  document.head.appendChild(iconLink);
-})();
-</script>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz48cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48dGV4dCB4PSI5NiIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyRDJEMkQiPuiusDwvdGV4dD48L3N2Zz4=">
 
 </head>
 <body>
@@ -1413,7 +1427,7 @@ var DEFAULT_PARAMS = {
 var STORAGE_KEY = 'daily_reconciliation_v2';
 var FILE_SYNC_DB = 'file_sync_db';
 var FILE_SYNC_STORE = 'handles';
-var DEMO_KEY = 'demo_data_loaded_v3';
+var DEMO_KEY = 'demo_data_loaded_v4';
 
 // ============================================================
 // File Sync Adapter (unchanged from v2)
@@ -1586,22 +1600,28 @@ var DATA = null;
 // PHASE 5.1: Demo Data Generator
 // ============================================================
 function generateDemoData() {
+  // Deterministic seeded random — same demo data every time
+  var seed = 20260613;
+  function seededRandom() {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  }
+  function pick(arr) { return arr[Math.floor(seededRandom() * arr.length)]; }
+
   var orders = [];
   var catKeys = ['韩式自拍','拍立得','证件照','写真照','其他'];
   var now = new Date();
-  // Generate 30 days back from today
   for (var d = 29; d >= 0; d--) {
     var dt = new Date(now);
     dt.setDate(dt.getDate() - d);
     var ds = dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
     var dayOfWeek = dt.getDay();
-    // Weekends have fewer orders
-    var maxOrders = (dayOfWeek === 0 || dayOfWeek === 6) ? 3 : 8;
-    var nOrders = Math.floor(Math.random() * maxOrders) + 1;
+    var maxOrders = (dayOfWeek === 0 || dayOfWeek === 6) ? 2 : 6;
+    var nOrders = Math.floor(seededRandom() * maxOrders) + 1;
     for (var i = 0; i < nOrders; i++) {
-      var cat = catKeys[Math.floor(Math.random() * catKeys.length)];
-      var pm = DEFAULT_PRICE_MAP[Math.floor(Math.random() * DEFAULT_PRICE_MAP.length)];
-      var isRefund = Math.random() < 0.08; // 8% refund rate
+      var cat = pick(catKeys);
+      var pm = pick(DEFAULT_PRICE_MAP);
+      var isRefund = seededRandom() < 0.08;
       orders.push({
         id: 'demo_'+ds+'_'+i,
         date: ds,
@@ -1613,7 +1633,6 @@ function generateDemoData() {
       });
     }
   }
-  // Sort by date, then by id
   orders.sort(function(a,b) {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
     return a.id.localeCompare(b.id);
@@ -2761,52 +2780,158 @@ function updateHeaderDate() {
 }
 
 // ============================================================
-// PHASE 4: PWA Lifecycle
+// PHASE 4: PWA Install — 保证每次点击一定弹窗
 // ============================================================
-var deferredPrompt=null;
+var deferredPrompt = null;
+var installBtn = document.getElementById('btnInstall');
 
-// Register inline Service Worker
-if('serviceWorker' in navigator) {
-  var swCode = 'self.addEventListener("install",function(e){self.skipWaiting();});'+
-    'self.addEventListener("activate",function(e){e.waitUntil(self.clients.claim());});'+
-    'self.addEventListener("fetch",function(e){'+
-      'e.respondWith('+
-        'caches.match(e.request).then(function(r){'+
-          'return r||fetch(e.request).then(function(resp){'+
-            'var clone=resp.clone();'+
-            'caches.open("v3-pwa").then(function(c){c.put(e.request,clone);});'+
-            'return resp;'+
-          '});'+
-        '}).catch(function(){return caches.match(e.request);})'+
-      ');'+
-    '});';
-  try {
-    var swBlob = new Blob([swCode], {type:'application/javascript'});
-    var swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl).then(function(reg){
-      console.log('%c📲 Service Worker registered','color:#0D7C3D');
-    }).catch(function(err){
-      console.log('%c📲 SW registration skipped (expected in some contexts)','color:#888');
-    });
-  } catch(e) {
-    console.log('%c📲 SW Blob registration not supported, app works offline via localStorage','color:#888');
-  }
+// ── 检测是否已安装 ──
+var _isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+if (_isStandalone && installBtn) {
+  installBtn.textContent = '✅ 已安装';
+  installBtn.style.opacity = '0.5';
+  installBtn.style.cursor = 'default';
 }
 
+// ── 注册 Service Worker（不再销毁旧的，保持稳定）──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(reg) {
+    console.log('%c🧾 SW registered: ' + reg.scope, 'color:#888');
+  }).catch(function(err) {
+    console.warn('SW registration failed:', err);
+  });
+}
+
+// ── 捕获 beforeinstallprompt（Chrome/Edge 原生事件）──
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
+  _isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  if (installBtn && !_isStandalone) {
+    installBtn.textContent = '⬇️ 安装到桌面';
+    installBtn.style.borderColor = 'var(--blue)';
+    installBtn.style.color = 'var(--blue)';
+    installBtn.style.opacity = '1';
+    installBtn.style.cursor = 'pointer';
+    installBtn.onclick = promptInstall;
+  }
+  // 不再自动弹横幅——首次点击才弹
 });
 
+// ── 安装成功 ──
 window.addEventListener('appinstalled', function() {
   deferredPrompt = null;
+  if (installBtn) {
+    installBtn.textContent = '✅ 已安装';
+    installBtn.style.borderColor = '';
+    installBtn.style.color = '';
+    installBtn.style.opacity = '0.5';
+    installBtn.style.cursor = 'default';
+  }
+  var guide = document.getElementById('installGuide');
+  if (guide) guide.classList.remove('show');
 });
 
+// ═══════════════════════════════════════════════════
+// 核心：点击安装 → 仅弹一次，绝不骚扰
+// ═══════════════════════════════════════════════════
 function promptInstall() {
-  deferredPrompt.prompt();
+  // 已安装 → 一句话
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    toast('✅ 已安装到桌面');
+    return;
+  }
+
+  // 有原生事件 → 直接弹系统安装窗口
+  if (deferredPrompt) {
+    deferredPrompt.prompt().then(function(r) {
+      if (r.outcome === 'accepted') {
+        if (installBtn) {
+          installBtn.textContent = '✅ 已安装';
+          installBtn.style.borderColor = '';
+          installBtn.style.color = '';
+          installBtn.style.opacity = '0.5';
+          installBtn.style.cursor = 'default';
+        }
+      }
+    }).catch(function(){});
+    deferredPrompt = null;
+    return;
+  }
+
+  // 没有原生事件 → 首次弹指导，之后静默
+  if (localStorage.getItem('_install_shown')) return;
+  showInstallGuide();
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════
+// 安装指导弹窗 — 仅弹一次（localStorage 记忆）
+// ═══════════════════════════════════════════════════
+function showInstallGuide() {
+  var old = document.getElementById('installGuide');
+  if (old) old.remove();
+
+  // 记死：弹过一次就不再弹
+  localStorage.setItem('_install_shown', '1');
+
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  var isChrome = /Chrome/.test(ua) && !/Edg/.test(ua);
+  var isEdge = /Edg/.test(ua);
+  var isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/Edg/.test(ua);
+
+  var h = '';
+  if (isIOS && isSafari) {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">📱</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">添加到主屏幕</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>1️⃣ 点底部 <b style="font-size:22px;">↗</b> <b>分享</b></div>' +
+      '<div>2️⃣ 选 <b>「添加到主屏幕」</b></div>' +
+      '<div>3️⃣ 点 <b>「添加」</b></div></div>';
+  } else if (isAndroid && isChrome) {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">📱</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">添加到主屏幕</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>1️⃣ 点右上角 <b>⋮</b></div>' +
+      '<div>2️⃣ 选 <b>「添加到主屏幕」</b></div>' +
+      '<div>3️⃣ 点 <b>「添加」</b></div></div>';
+  } else if (isChrome || isEdge) {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">💻</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">安装到桌面</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>地址栏右侧点 <b style="display:inline-block;width:22px;height:22px;background:var(--ink);color:var(--paper);border-radius:3px;text-align:center;line-height:22px;font-size:13px;">⊕</b> <b>安装</b></div>' +
+      '<div>或菜单 <b>⋮</b> → <b>「安装 每日对账…」</b></div></div>' +
+      '<div style="margin-top:14px;padding:10px 14px;background:var(--surface);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--ink-dim);">' +
+      '💡 安装后离线可用，像本地软件一样</div>';
+  } else {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">📲</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">安装到设备</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>请用 <b>Chrome</b> 或 <b>Edge</b> 打开</div>' +
+      '<div>地址栏会出现安装图标</div></div>';
+  }
+
+  // 如果原生事件可用，额外加一键安装按钮
+  if (deferredPrompt) {
+    h += '<div style="margin-top:14px;padding:12px;background:var(--blue-bg);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--blue);text-align:center;cursor:pointer;font-weight:600;" onclick="var d=deferredPrompt;if(d){d.prompt().then(function(r){if(r.outcome===\'accepted\'){var g=document.getElementById(\'installGuide\');if(g)g.classList.remove(\'show\');var b=document.getElementById(\'btnInstall\');if(b){b.textContent=\'✅ 已安装\';b.style.borderColor=\'\';b.style.color=\'\';}}});deferredPrompt=null;}">' +
+      '🔔 点此直接弹出系统安装窗口</div>';
+  }
+
+  var guide = document.createElement('div');
+  guide.id = 'installGuide';
+  guide.className = 'install-guide-overlay show';
+  guide.innerHTML = '<div class="install-guide-card">' +
+    '<button class="install-guide-close-btn" onclick="var g=document.getElementById(\'installGuide\');if(g)g.classList.remove(\'show\');">✕</button>' +
+    h +
+    '<div style="margin-top:16px;text-align:center;font-size:var(--text-xs);color:var(--ink-faint);">安装后可从桌面直接打开 · 离线也能记账</div></div>';
+  guide.addEventListener('click', function(e) {
+    if (e.target === guide) guide.classList.remove('show');
+  });
+  document.body.appendChild(guide);
+}
+
+
 // PHASE 5.2: Keyboard Shortcuts
 // ============================================================
 var tabOrder = ['today','month','summary','inventory','settings'];
