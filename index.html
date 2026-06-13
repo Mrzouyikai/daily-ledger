@@ -2830,11 +2830,11 @@ window.addEventListener('appinstalled', function() {
 // 核心：点击一定弹，不依赖任何浏览器事件
 // ═══════════════════════════════════════════════════
 
-// 未安装 → 5 秒后自动弹安装指引（仅一次）
+// 未安装 → 5 秒后自动弹安装（仅一次）
 if (!_isStandalone && !sessionStorage.getItem('_guide_auto')) {
   setTimeout(function() {
-    if (!window.matchMedia('(display-mode: standalone)').matches) {
-      showInstallGuide();
+    if (!window.matchMedia('(display-mode: standalone)').matches && !deferredPrompt) {
+      promptInstall();
       sessionStorage.setItem('_guide_auto', '1');
     }
   }, 5000);
@@ -2869,10 +2869,8 @@ function promptInstall() {
     return;
   }
 
-  // 无原生事件 → 弹安装指导（每次点击都弹，不静默）
-  try { showInstallGuide(); } catch(e) {
-    alert('💻 Chrome/Edge：地址栏点 ⊕ 安装\n📱 Safari：分享 → 添加到主屏幕');
-  }
+  // 无原生事件 → alert 兜底，一句话说清楚
+  alert('💻 Chrome/Edge：地址栏右侧点 ⊕ 安装\n菜单 ⋮ → 「安装 每日对账…」\n\n📱 iOS Safari：分享 ↗ → 添加到主屏幕\n📱 Android Chrome：菜单 ⋮ → 添加到主屏幕');
 }
 
 // ═══════════════════════════════════════════════════
