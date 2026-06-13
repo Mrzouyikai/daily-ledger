@@ -1282,12 +1282,6 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
 
 </div>
 
-<!-- PHASE 4: Install Banner -->
-<div class="install-banner" id="installBanner" style="display:none">
-  <span class="install-banner-text">📲 安装到手机桌面，像 App 一样使用</span>
-  <button class="install-banner-btn" onclick="promptInstall()">安装</button>
-  <button class="install-banner-close" onclick="dismissInstall()">×</button>
-</div>
 
 <!-- Mobile Bottom Nav -->
 <nav class="bottom-nav" id="bottomNav">
@@ -2802,65 +2796,14 @@ if('serviceWorker' in navigator) {
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
-  // Show install button in header
-  var btn = document.getElementById('btnInstall');
-  if (btn) btn.classList.add('show');
-  // Show banner after 3 seconds
-  setTimeout(function() {
-    if (deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
-      var banner = document.getElementById('installBanner');
-      if (banner && !sessionStorage.getItem('install_dismissed')) {
-        banner.style.display = 'flex';
-      }
-    }
-  }, 3000);
 });
 
 window.addEventListener('appinstalled', function() {
   deferredPrompt = null;
-  var btn = document.getElementById('btnInstall');
-  if (btn) btn.classList.remove('show');
-  var banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'none';
-  toast('✅ 已安装到桌面');
 });
 
 function promptInstall() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(result) {
-      if (result.outcome === 'accepted') {
-        var btn = document.getElementById('btnInstall');
-        if (btn) btn.style.display = 'none';
-      }
-      deferredPrompt = null;
-    });
-    return;
-  }
-  // Always show simple install guide
-  var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  var isAndroid = /Android/.test(navigator.userAgent);
-  if (isIOS) {
-    toast('点底部 ↑ 分享 → 添加到主屏幕');
-  } else if (isAndroid) {
-    toast('点右上 ⋮ → 安装应用 / 添加到主屏幕');
-  } else {
-    toast('点浏览器地址栏右边 [+] 安装');
-  }
-}
-
-function dismissInstall() {
-  var banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'none';
-  sessionStorage.setItem('install_dismissed', '1');
-}
-
-// Hide install UI if already in standalone mode
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  var btn = document.getElementById('btnInstall');
-  if (btn) btn.style.display = 'none';
-  var banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'none';
+  deferredPrompt.prompt();
 }
 
 // ============================================================
