@@ -316,9 +316,8 @@ body.dark::before { opacity: 0.05; }
   color: var(--ink-dim);
   border-radius: var(--radius-sm);
   transition: all var(--dur-fast) var(--ease-out);
-  display: none;
+  display: inline-flex; align-items: center; gap: 4px;
 }
-.btn-install.show { display: inline-flex; align-items: center; gap: 4px; }
 .btn-install:hover { border-color: var(--ink); color: var(--ink); }
 
 /* Dark mode toggle */
@@ -2819,12 +2818,12 @@ function promptInstall() {
     deferredPrompt.userChoice.then(function(result) {
       if (result.outcome === 'accepted') {
         var btn = document.getElementById('btnInstall');
-        if (btn) btn.classList.remove('show');
+        if (btn) btn.style.display = 'none';
       }
       deferredPrompt = null;
     });
   } else {
-    toast('📲 请使用浏览器菜单中的「添加到主屏幕」');
+    toast('点浏览器菜单 → 添加到主屏幕');
   }
 }
 
