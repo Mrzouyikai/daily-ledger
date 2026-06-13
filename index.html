@@ -2758,57 +2758,30 @@ function updateHeaderDate() {
 
 // ============================================================
 // ============================================================
-// PHASE 4: PWA — 强制可安装，所有场景兼容
-// ============================================================
-var deferredPrompt = null;
-var installBtn = document.getElementById('btnInstall');
+// PHASE 4: PWA - Install button, native dialog only
+var dp = null;
+var ib = document.getElementById('btnInstall');
 
-// ── SW 注册 ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(reg) { reg.update(); }).catch(function(){});
-  // Clear old SW caches on first load
-  caches.keys().then(function(keys) { return Promise.all(keys.filter(function(k) { return k !== 'daily-recon-v5'; }).map(function(k) { return caches.delete(k); })); }).catch(function(){});
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(r) { r.update(); }).catch(function(){});
+  caches.keys().then(function(k) { return Promise.all(k.filter(function(x) { return x !== 'daily-recon-v5'; }).map(function(x) { return caches.delete(x); })); }).catch(function(){});
 }
 
-// ── 已安装检测（standalone mode）→ 隐藏按钮 ──
-if (installBtn && window.matchMedia('(display-mode: standalone)').matches) {
-  installBtn.style.display = 'none';
-}
-window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) {
-  if (installBtn) installBtn.style.display = e.matches ? 'none' : '';
-});
+if (ib && window.matchMedia('(display-mode: standalone)').matches) ib.style.display = 'none';
+window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) { if (ib) ib.style.display = e.matches ? 'none' : ''; });
 
-// ── 捕获 beforeinstallprompt ──
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (installBtn) { installBtn.textContent = '⬇️ 安装到桌面'; installBtn.disabled = false; }
-});
+window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); dp = e; });
+window.addEventListener('appinstalled', function() { if (ib) ib.style.display = 'none'; });
 
-// ── 安装成功 → 隐藏按钮 ──
-window.addEventListener('appinstalled', function() {
-  deferredPrompt = null;
-  if (installBtn) { installBtn.style.display = 'none'; }
-});
-
-// ── 点击安装：优先用原生对话框，失败则引导 ──
 function promptInstall() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    if (deferredPrompt.userChoice) {
-      deferredPrompt.userChoice.then(function(choiceResult) {
-        deferredPrompt = null;
-        if (choiceResult.outcome !== 'accepted') {
-          var retry = function(ev) { ev.preventDefault(); deferredPrompt = ev; if (installBtn) installBtn.textContent = '⬇️ 安装到桌面'; window.removeEventListener('beforeinstallprompt', retry); };
-          window.addEventListener('beforeinstallprompt', retry);
-        }
-      });
-    }
-  } else {
-    toast('ℹ️ 请使用浏览器菜单 > "安装每日对账"，或点击地址栏右侧安装图标');
-  }
-}
-// PHASE 5.2: Keyboard Shortcuts
+  if (dp) { dp.prompt(); return; }
+  var c = 0;
+  var t = setInterval(function() {
+    c++;
+    if (dp) { clearInterval(t); dp.prompt(); }
+    if (c > 100) { clearInterval(t); }
+  }, 200);
+}// PHASE 5.2: Keyboard Shortcuts
 // ============================================================
 var tabOrder = ['today','month','summary','inventory','settings'];
 
