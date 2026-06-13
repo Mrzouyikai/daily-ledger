@@ -2838,32 +2838,15 @@ if (!_isStandalone && !sessionStorage.getItem('_guide_auto')) {
 // 核心：点击安装 → 仅弹一次，绝不骚扰
 // ═══════════════════════════════════════════════════
 function promptInstall() {
-  // 已安装 → 一句话
+  // 已安装 → 提示
   if (window.matchMedia('(display-mode: standalone)').matches) {
     toast('✅ 已安装到桌面');
     return;
   }
 
-  // 有原生事件 → 直接弹系统安装窗口
-  if (deferredPrompt) {
-    deferredPrompt.prompt().then(function(r) {
-      if (r.outcome === 'accepted') {
-        if (installBtn) {
-          installBtn.textContent = '✅ 已安装';
-          installBtn.style.borderColor = '';
-          installBtn.style.color = '';
-          installBtn.style.opacity = '0.5';
-          installBtn.style.cursor = 'default';
-        }
-      }
-    }).catch(function(){});
-    deferredPrompt = null;
-    return;
-  }
-
-  // 没有原生事件 → 每次都弹安装指引
+  // 无论如何都弹指引——不依赖 beforeinstallprompt
   try { showInstallGuide(); } catch(e) {
-    alert('📲 Chrome/Edge 打开 → 地址栏点 ⊕ 安装\nSafari → 分享按钮 → 添加到主屏幕');
+    alert('💻 Chrome/Edge：地址栏点 ⊕ 安装\n📱 Safari：分享 → 添加到主屏幕');
   }
 }
 
