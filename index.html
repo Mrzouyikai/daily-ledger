@@ -2765,7 +2765,9 @@ var installBtn = document.getElementById('btnInstall');
 
 // ── SW 注册 ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function(){});
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(reg) { reg.update(); }).catch(function(){});
+  // Clear old SW caches on first load
+  caches.keys().then(function(keys) { return Promise.all(keys.filter(function(k) { return k !== 'daily-recon-v5'; }).map(function(k) { return caches.delete(k); })); }).catch(function(){});
 }
 
 // ── 已安装检测（standalone mode）→ 隐藏按钮 ──
