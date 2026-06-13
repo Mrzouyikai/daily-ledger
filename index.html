@@ -2822,8 +2822,17 @@ function promptInstall() {
       }
       deferredPrompt = null;
     });
+    return;
+  }
+  // Always show simple install guide
+  var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  var isAndroid = /Android/.test(navigator.userAgent);
+  if (isIOS) {
+    toast('点底部 ↑ 分享 → 添加到主屏幕');
+  } else if (isAndroid) {
+    toast('点右上 ⋮ → 安装应用 / 添加到主屏幕');
   } else {
-    toast('点浏览器菜单 → 添加到主屏幕（Android）或 分享 → 添加到主屏幕（iPhone）');
+    toast('点浏览器地址栏右边 [+] 安装');
   }
 }
 
