@@ -2780,19 +2780,18 @@ function updateHeaderDate() {
 }
 
 // ============================================================
-// PHASE 4: PWA Install — 保证每次点击一定弹窗
+// PHASE 4: PWA Install — 不依赖 beforeinstallprompt
 // ============================================================
 var deferredPrompt = null;
 var installBtn = document.getElementById('btnInstall');
 
-// ── 检测是否已安装 ──
+// ── 已安装？──
 var _isStandalone = window.matchMedia('(display-mode: standalone)').matches;
 if (_isStandalone && installBtn) {
   installBtn.textContent = '✅ 已安装';
   installBtn.style.opacity = '0.5';
   installBtn.style.cursor = 'default';
 } else if (installBtn) {
-  // 始终蓝色可点，不依赖 beforeinstallprompt 是否触发
   installBtn.textContent = '＋ 安装应用';
   installBtn.style.borderColor = 'var(--blue)';
   installBtn.style.color = 'var(--blue)';
@@ -2800,44 +2799,40 @@ if (_isStandalone && installBtn) {
   installBtn.style.cursor = 'pointer';
 }
 
-// ── 注册 Service Worker（不再销毁旧的，保持稳定）──
+// ── SW ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(reg) {
-    console.log('%c🧾 SW registered: ' + reg.scope, 'color:#888');
-  }).catch(function(err) {
-    console.warn('SW registration failed:', err);
-  });
+  navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function(){});
 }
 
-// ── 捕获 beforeinstallprompt → 更新按钮文案 ──
+// ── 捕获 beforeinstallprompt（可能触发，可能不）──
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
-  _isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-  if (installBtn && !_isStandalone) {
-    installBtn.textContent = '⬇️ 安装到桌面';
-    installBtn.style.borderColor = 'var(--blue)';
-    installBtn.style.color = 'var(--blue)';
-    installBtn.style.opacity = '1';
-    installBtn.style.cursor = 'pointer';
-    installBtn.onclick = promptInstall;
-  }
-  // 不再自动弹横幅——首次点击才弹
+  if (installBtn) installBtn.textContent = '⬇️ 安装到桌面';
 });
 
 // ── 安装成功 ──
 window.addEventListener('appinstalled', function() {
   deferredPrompt = null;
-  if (installBtn) {
-    installBtn.textContent = '✅ 已安装';
-    installBtn.style.borderColor = '';
-    installBtn.style.color = '';
-    installBtn.style.opacity = '0.5';
-    installBtn.style.cursor = 'default';
-  }
+  if (installBtn) { installBtn.textContent = '✅ 已安装'; installBtn.style.opacity = '0.5'; }
   var guide = document.getElementById('installGuide');
   if (guide) guide.classList.remove('show');
 });
+
+
+// ═══════════════════════════════════════════════════
+// 核心：点击一定弹，不依赖任何浏览器事件
+// ═══════════════════════════════════════════════════
+
+// 未安装 → 5 秒后自动弹安装指引（仅一次）
+if (!_isStandalone && !sessionStorage.getItem('_guide_auto')) {
+  setTimeout(function() {
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      showInstallGuide();
+      sessionStorage.setItem('_guide_auto', '1');
+    }
+  }, 5000);
+}
 
 // ═══════════════════════════════════════════════════
 // 核心：点击安装 → 仅弹一次，绝不骚扰
