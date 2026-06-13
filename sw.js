@@ -1,14 +1,12 @@
-// Service Worker for 每日对账 · 热敏小票 PWA v3
+// Service Worker for 姣忔棩瀵硅处 路 鐑晱灏忕エ PWA v3
 // Cache-first strategy, offline support
-// 关键：不自动清理旧缓存，保持 SW 稳定 → beforeinstallprompt 能触发
-
+// 鍏抽敭锛氫笉鑷姩娓呯悊鏃х紦瀛橈紝淇濇寔 SW 绋冲畾 鈫?beforeinstallprompt 鑳借Е鍙?
 const CACHE_NAME = 'daily-recon-v5';
 const APP_FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
-  console.log('🧾 SW installing...');
-  // 预缓存核心文件
-  e.waitUntil(
+  console.log('馃Ь SW installing...');
+  // 棰勭紦瀛樻牳蹇冩枃浠?  e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(APP_FILES).catch((err) => {
         console.warn('SW precache partial fail:', err);
@@ -19,7 +17,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  console.log('🧾 SW activated — cleaning old caches');
+  console.log('馃Ь SW activated 鈥?cleaning old caches');
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -30,7 +28,7 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // 跳过 chrome-extension 和非 http(s) 请求
+  // 璺宠繃 chrome-extension 鍜岄潪 http(s) 璇锋眰
   if (!e.request.url.startsWith('http')) return;
 
   e.respondWith(
@@ -44,8 +42,9 @@ self.addEventListener('fetch', (e) => {
         return resp;
       });
     }).catch(() => {
-      // 离线回退
+      // 绂荤嚎鍥為€€
       return caches.match(e.request);
     })
   );
 });
+
