@@ -2791,6 +2791,13 @@ if (_isStandalone && installBtn) {
   installBtn.textContent = '✅ 已安装';
   installBtn.style.opacity = '0.5';
   installBtn.style.cursor = 'default';
+} else if (installBtn) {
+  // 始终蓝色可点，不依赖 beforeinstallprompt 是否触发
+  installBtn.textContent = '＋ 安装应用';
+  installBtn.style.borderColor = 'var(--blue)';
+  installBtn.style.color = 'var(--blue)';
+  installBtn.style.opacity = '1';
+  installBtn.style.cursor = 'pointer';
 }
 
 // ── 注册 Service Worker（不再销毁旧的，保持稳定）──
@@ -2802,7 +2809,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ── 捕获 beforeinstallprompt（Chrome/Edge 原生事件）──
+// ── 捕获 beforeinstallprompt → 更新按钮文案 ──
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
