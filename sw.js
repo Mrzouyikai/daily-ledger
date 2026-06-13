@@ -2,7 +2,7 @@
 // Cache-first strategy, offline support
 // 关键：不自动清理旧缓存，保持 SW 稳定 → beforeinstallprompt 能触发
 
-const CACHE_NAME = 'daily-recon-v4-blue';
+const CACHE_NAME = 'daily-recon-v5';
 const APP_FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
