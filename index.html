@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -1077,6 +1077,32 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
   font-size: var(--text-base); color: var(--ink-faint);
   padding: 0 var(--space-1);
 }
+
+/* ============================================================
+   PHASE 4: Install Guide Modal — 安装指导弹窗（兜底保证弹窗）
+   ============================================================ */
+.install-guide-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center;
+  padding: var(--space-4);
+}
+.install-guide-overlay.show { display: flex; }
+.install-guide-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: var(--space-6);
+  max-width: 380px; width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: fadeScale 200ms var(--ease-spring) forwards;
+}
+.install-guide-close-btn {
+  position: absolute; top: var(--space-3); right: var(--space-3);
+  font-size: var(--text-base); color: var(--ink-faint);
+  padding: 4px 8px; border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.install-guide-close-btn:hover { color: var(--ink); }
 
 /* ============================================================
    PHASE 5.2: Keyboard Shortcuts Panel
@@ -2754,18 +2780,37 @@ function updateHeaderDate() {
 }
 
 // ============================================================
-// ============================================================
-// PHASE 4: PWA Install — 点击即弹原生安装对话框
+// PHASE 4: PWA Install — 不依赖 beforeinstallprompt
 // ============================================================
 var deferredPrompt = null;
 var installBtn = document.getElementById('btnInstall');
 
-// ── SW 注册 ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function(){});
+// ── 已安装？──
+var _isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+if (_isStandalone && installBtn) {
+  installBtn.textContent = '✅ 已安装';
+  installBtn.style.opacity = '0.5';
+  installBtn.style.cursor = 'default';
+} else if (installBtn) {
+  installBtn.textContent = '＋ 安装应用';
+  installBtn.style.borderColor = 'var(--blue)';
+  installBtn.style.color = 'var(--blue)';
+  installBtn.style.opacity = '1';
+  installBtn.style.cursor = 'pointer';
 }
 
-// ── 捕获 beforeinstallprompt ──
+// ── SW ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js', { scope: '/daily-ledger/' }).then(function(reg) {
+    console.log('🧾 SW registered:', reg.scope);
+    // Force update to latest version
+    reg.update();
+  }).catch(function(err) {
+    console.error('SW registration failed:', err);
+  });
+}
+
+// ── 捕获 beforeinstallprompt（可能触发，可能不）──
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
@@ -2775,15 +2820,124 @@ window.addEventListener('beforeinstallprompt', function(e) {
 // ── 安装成功 ──
 window.addEventListener('appinstalled', function() {
   deferredPrompt = null;
-  if (installBtn) { installBtn.textContent = '✅ 已安装'; }
+  if (installBtn) { installBtn.textContent = '✅ 已安装'; installBtn.style.opacity = '0.5'; }
+  var guide = document.getElementById('installGuide');
+  if (guide) guide.classList.remove('show');
 });
 
-// ── 点击安装：直接弹原生对话框 ──
-function promptInstall() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt = null;
+
+// ═══════════════════════════════════════════════════
+// 核心：点击一定弹，不依赖任何浏览器事件
+// ═══════════════════════════════════════════════════
+
+// 未安装 → 5 秒后自动弹安装（仅一次）
+if (!_isStandalone && !sessionStorage.getItem('_guide_auto')) {
+  setTimeout(function() {
+    if (!window.matchMedia('(display-mode: standalone)').matches && !deferredPrompt) {
+      promptInstall();
+      sessionStorage.setItem('_guide_auto', '1');
+    }
+  }, 5000);
 }
+
+// ═══════════════════════════════════════════════════
+// 核心：点击安装 → 优先原生安装 → 兜底指导
+// ═══════════════════════════════════════════════════
+function promptInstall() {
+  // 已安装 → 提示
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    toast('✅ 已安装到桌面');
+    return;
+  }
+
+  // 有原生事件 → 直接弹系统安装窗口
+  if (deferredPrompt) {
+    deferredPrompt.prompt().then(function(r) {
+      if (r.outcome === 'accepted') {
+        if (installBtn) {
+          installBtn.textContent = '✅ 已安装';
+          installBtn.style.borderColor = '';
+          installBtn.style.color = '';
+          installBtn.style.opacity = '0.5';
+          installBtn.style.cursor = 'default';
+        }
+        var guide = document.getElementById('installGuide');
+        if (guide) guide.classList.remove('show');
+      }
+    }).catch(function(){});
+    deferredPrompt = null;
+    return;
+  }
+
+  // 无原生事件 → alert 兜底，一句话说清楚
+  alert('💻 Chrome/Edge：地址栏右侧点 ⊕ 安装\n菜单 ⋮ → 「安装 每日对账…」\n\n📱 iOS Safari：分享 ↗ → 添加到主屏幕\n📱 Android Chrome：菜单 ⋮ → 添加到主屏幕');
+}
+
+// ═══════════════════════════════════════════════════
+// 安装指导弹窗 — 仅弹一次（localStorage 记忆）
+// ═══════════════════════════════════════════════════
+function showInstallGuide() {
+  var old = document.getElementById('installGuide');
+  if (old) old.remove();
+
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  var isChrome = /Chrome/.test(ua) && !/Edg/.test(ua);
+  var isEdge = /Edg/.test(ua);
+  var isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/Edg/.test(ua);
+
+  var h = '';
+  if (isIOS && isSafari) {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">📱</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">添加到主屏幕</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>1️⃣ 点底部 <b style="font-size:22px;">↗</b> <b>分享</b></div>' +
+      '<div>2️⃣ 选 <b>「添加到主屏幕」</b></div>' +
+      '<div>3️⃣ 点 <b>「添加」</b></div></div>';
+  } else if (isAndroid && isChrome) {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">📱</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">添加到主屏幕</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>1️⃣ 点右上角 <b>⋮</b></div>' +
+      '<div>2️⃣ 选 <b>「添加到主屏幕」</b></div>' +
+      '<div>3️⃣ 点 <b>「添加」</b></div></div>';
+  } else if (isChrome || isEdge) {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">💻</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">安装到桌面</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>地址栏右侧点 <b style="display:inline-block;width:22px;height:22px;background:var(--ink);color:var(--paper);border-radius:3px;text-align:center;line-height:22px;font-size:13px;">⊕</b> <b>安装</b></div>' +
+      '<div>或菜单 <b>⋮</b> → <b>「安装 每日对账…」</b></div></div>' +
+      '<div style="margin-top:14px;padding:10px 14px;background:var(--surface);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--ink-dim);">' +
+      '💡 安装后离线可用，像本地软件一样</div>';
+  } else {
+    h = '<div style="text-align:center;font-size:48px;margin-bottom:8px;">📲</div>' +
+      '<h3 style="font-family:var(--font-serif);font-weight:700;margin-bottom:12px;font-size:var(--text-lg);">安装到设备</h3>' +
+      '<div style="font-size:var(--text-sm);color:var(--ink-dim);line-height:2.2;">' +
+      '<div>请用 <b>Chrome</b> 或 <b>Edge</b> 打开</div>' +
+      '<div>地址栏会出现安装图标</div></div>';
+  }
+
+  // 如果原生事件可用，额外加一键安装按钮
+  if (deferredPrompt) {
+    h += '<div style="margin-top:14px;padding:12px;background:var(--blue-bg);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--blue);text-align:center;cursor:pointer;font-weight:600;" onclick="var d=deferredPrompt;if(d){d.prompt().then(function(r){if(r.outcome===\'accepted\'){var g=document.getElementById(\'installGuide\');if(g)g.classList.remove(\'show\');var b=document.getElementById(\'btnInstall\');if(b){b.textContent=\'✅ 已安装\';b.style.borderColor=\'\';b.style.color=\'\';}}});deferredPrompt=null;}">' +
+      '🔔 点此直接弹出系统安装窗口</div>';
+  }
+
+  var guide = document.createElement('div');
+  guide.id = 'installGuide';
+  guide.className = 'install-guide-overlay show';
+  guide.innerHTML = '<div class="install-guide-card">' +
+    '<button class="install-guide-close-btn" onclick="var g=document.getElementById(\'installGuide\');if(g)g.classList.remove(\'show\');">✕</button>' +
+    h +
+    '<div style="margin-top:16px;text-align:center;font-size:var(--text-xs);color:var(--ink-faint);">安装后可从桌面直接打开 · 离线也能记账</div></div>';
+  guide.addEventListener('click', function(e) {
+    if (e.target === guide) guide.classList.remove('show');
+  });
+  document.body.appendChild(guide);
+}
+
+
 // PHASE 5.2: Keyboard Shortcuts
 // ============================================================
 var tabOrder = ['today','month','summary','inventory','settings'];
