@@ -2778,7 +2778,7 @@ if ('serviceWorker' in navigator) {
       }
     });
   }).catch(function(){});
-  caches.keys().then(function(k) { return Promise.all(k.filter(function(x) { return x !== 'daily-recon-v5'; }).map(function(x) { return caches.delete(x); })); }).catch(function(){});
+  caches.keys().then(function(k) { return Promise.all(k.filter(function(x) { return x !== 'daily-recon-v6'; }).map(function(x) { return caches.delete(x); })); }).catch(function(){});
 }
 
 if (ib && window.matchMedia('(display-mode: standalone)').matches) ib.style.display = 'none';
