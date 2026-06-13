@@ -1,6 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -317,6 +315,11 @@ body.dark::before { opacity: 0.05; }
   display: inline-flex; align-items: center; gap: 4px;
 }
 .btn-install:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Hide install button when already installed in standalone mode */
+@media all and (display-mode: standalone) {
+  .btn-install { display: none !important; }
+}
 
 /* Dark mode toggle */
 .btn-theme {
@@ -1212,7 +1215,7 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
 <body>
 
 <!-- PHASE 5.4: Splash Screen -->
-<div class="splash" id="splash">
+<div class="splash hide" id="splash">
   <div class="splash-inner">🧾 每日对账</div>
 </div>
 
@@ -1240,7 +1243,7 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
         🧾 每日对账
         <span class="sync-badge inactive" id="syncBadge" onclick="enableFileSync()" title="点击启用文件同步 → data.json">[DIGITAL]</span>
       </div>
-      <div class="header-subtitle" id="headerDate"></div>
+      <div class="header-subtitle" id="headerDate">2026年6月13日 星期六 19:30</div>
     </div>
     <div class="header-right">
       <button class="btn-install" id="btnInstall" onclick="promptInstall()" title="安装到桌面">⬇️ 安装</button>
@@ -1259,12 +1262,12 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
 
   <!-- Main Layout -->
   <div class="main-layout">
-    <div class="main-content" id="mainContent"></div>
+    <div class="main-content" id="mainContent"><div class="date-nav"><button class="date-nav-btn" onclick="changeDay(-1)">←</button><div class="date-nav-label"><input type="date" id="datePicker" value="2026-06-13" onchange="onDateChange(this.value)"><span class="date-weekday">星期六</span></div><button class="date-nav-btn" onclick="changeDay(1)">→</button><button class="date-nav-btn" onclick="goToday()" style="font-size:12px;font-family:var(--font-mono)">今天</button></div><div class="card input-sticky"><div class="card-header">＋ 新增订单</div><div class="input-row"><select class="category-select" id="catSelect" onchange="onCatChange(this.value)"><option value="韩式自拍" selected="">🤳 韩式自拍</option><option value="拍立得">📷 拍立得</option><option value="证件照">🪪 证件照</option><option value="写真照">🖼️ 写真照</option><option value="其他">📦 其他</option></select><input type="number" class="input-price" id="priceInput" placeholder="输入收款金额" step="0.1" min="0" oninput="onPriceInput(this.value)" onkeydown="onPriceKeydown(event)"><span class="tier-preview" id="tierPreview">—</span><span class="profit-preview empty" id="profitPreview">利润 —</span><button class="btn-add" id="btnAdd" disabled="" onclick="submitOrder()">记一笔</button></div><div class="no-match" id="noMatch">⚠ 未找到价格映射，请先在「设置」中添加</div></div><div class="card"><div class="card-header">📋 2026-06-13 订单记录<span style="font-weight:400;font-size:12px">共 1 单</span></div><div class="daily-summary"><div class="summary-item"><span class="summary-label">今日有效订单</span><span class="summary-value">1 单</span></div><div class="summary-item"><span class="summary-label">今日收款</span><span class="summary-value">¥57.70</span></div><div class="summary-item"><span class="summary-label">今日利润</span><span class="summary-value green">¥31.70</span></div><div class="summary-item"><span class="summary-label">利润率</span><span class="summary-value">54.9%</span></div></div><div class="cat-breakdown"><div class="cat-breakdown-item"><span class="cat-badge other">📦 其他</span> ×<span class="cat-breakdown-count">1</span> ¥57.70</div></div><div class="order-list"><div class="order-item"><span class="order-index">#1</span><span class="cat-badge other">📦 其他</span><span class="tier-badge mid">中价</span><span class="order-revenue">¥57.70</span><span class="order-profit">+¥31.70</span><span class="order-cumulative-revenue">累计 ¥57.70</span><span class="order-cumulative-profit">利润 ¥31.70</span><span class="order-margin">54.9%</span><div class="order-actions"><button class="btn-refund" onclick="refundOrder('demo_2026-06-13_0')" title="退款">🔙</button><button class="order-delete" onclick="removeOrder('demo_2026-06-13_0')" title="删除">×</button></div></div></div></div></div>
     <aside class="side-panel" id="sidePanelWrap">
       <button class="panel-toggle" id="panelToggle" onclick="togglePanel()">
         📊 经营仪表盘 ▾
       </button>
-      <div class="side-panel-content open" id="sidePanel"></div>
+      <div class="side-panel-content open" id="sidePanel"><div class="card"><div class="card-header">📊 经营仪表盘</div><div class="panel-section-label">🏷️ 收入概览</div><div class="panel-grid-2"><div class="panel-col-header">📅 今日</div><div class="panel-col-header">📅 6月</div><div class="panel-metric"><span class="panel-label">收款</span><span class="panel-value highlight">¥57.70</span></div><div class="panel-metric"><span class="panel-label">收款</span><span class="panel-value highlight">¥2,212.40</span></div><div class="panel-metric"><span class="panel-label">利润</span><span class="panel-value green">¥31.70</span></div><div class="panel-metric"><span class="panel-label">利润</span><span class="panel-value green">¥1,348.53</span></div><div class="panel-metric"><span class="panel-label">净利润</span><span class="panel-value red">¥-128.30</span></div><div class="panel-metric"><span class="panel-label">净利润</span><span class="panel-value red">¥-3,451.47</span></div><div class="panel-metric"><span class="panel-label">毛利率</span><span class="panel-value">54.9%</span></div><div class="panel-metric"><span class="panel-label">毛利率</span><span class="panel-value">61.0%</span></div></div><div class="panel-section-label">⚙️ 固定成本参数 <span style="font-size:10px;font-weight:400;cursor:pointer;color:var(--blue)" onclick="syncPanelFromSettings()">↻ 同步</span></div><div class="panel-metric-hybrid"><span class="panel-label">房租（月度）</span><input type="number" class="panel-input" id="pp_rent" value="1200" step="1" onchange="onPanelParam('rent',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">人工（月度）</span><input type="number" class="panel-input" id="pp_labor" value="3000" step="1" onchange="onPanelParam('labor',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">能源（月度）</span><input type="number" class="panel-input" id="pp_energy" value="600" step="1" onchange="onPanelParam('energy',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">月度总固定成本</span><span class="panel-auto">¥4,800.00</span></div><div class="panel-metric-hybrid"><span class="panel-label">每月营业天数</span><input type="number" class="panel-input" id="pp_bDays" value="30" step="1" onchange="onPanelParam('businessDays',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">每日固定成本</span><span class="panel-auto">¥160.00</span></div><div class="panel-metric-hybrid"><span class="panel-label">毛利率</span><input type="number" class="panel-input" id="pp_gm2" value="0.5" step="0.01" min="0" max="1" onchange="onPanelParam('grossMargin',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">每日盈亏平衡点</span><span class="panel-auto">¥320.00</span></div><div class="panel-section-label">💰 成本明细 <span style="font-size:10px;font-weight:400;cursor:pointer;color:var(--blue)" onclick="resetCostParams()">恢复默认</span></div><div class="panel-metric-hybrid"><span class="panel-label">原料成本</span><input type="number" class="panel-input" id="pp_pCost" value="5500" step="1" onchange="onPanelParam('purchaseCost',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">人工成本</span><input type="number" class="panel-input" id="pp_lCost" value="0" step="1" onchange="onPanelParam('laborCost',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">能源成本</span><input type="number" class="panel-input" id="pp_eCost" value="300" step="1" onchange="onPanelParam('energyCost',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">营销费用</span><input type="number" class="panel-input" id="pp_mktCost" value="0" step="1" onchange="onPanelParam('marketingCost',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">固定成本合计</span><span class="panel-auto">¥5,800.00</span></div><div class="panel-metric-hybrid"><span class="panel-label">营业天数</span><input type="number" class="panel-input" id="pp_mDays3" value="30" step="1" onchange="onPanelParam('monthlyBusinessDays',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">毛利率</span><input type="number" class="panel-input" id="pp_gm3" value="0.5" step="0.01" min="0" max="1" onchange="onPanelParam('grossMargin',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">每日盈亏平衡点</span><span class="panel-auto">¥386.67</span></div><div class="panel-metric-hybrid"><span class="panel-label">全周期保本总额</span><span class="panel-auto">¥11,600.10</span></div><div class="panel-section-label">📈 经营预测</div><div class="panel-metric-hybrid"><span class="panel-label">日营业额（基准）</span><input type="number" class="panel-input" id="pp_dRev" value="400" step="1" onchange="onPanelParam('dailyRevenue',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">月营业天数</span><input type="number" class="panel-input" id="pp_mDays4" value="30" step="1" onchange="onPanelParam('monthlyBusinessDays',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">月营业额</span><span class="panel-auto">¥12,000.00</span></div><div class="panel-metric-hybrid"><span class="panel-label">毛利率</span><input type="number" class="panel-input" id="pp_gm4" value="0.5" step="0.01" min="0" max="1" onchange="onPanelParam('grossMargin',this.value)"></div><div class="panel-metric-hybrid"><span class="panel-label">月净利润</span><span class="panel-auto" style="color:var(--green)">¥200.00</span></div><div class="panel-metric-hybrid"><span class="panel-label">回本周期</span><span class="panel-auto">29 月</span></div></div></div>
     </aside>
   </div>
 
@@ -2755,7 +2758,7 @@ function updateHeaderDate() {
 
 // ============================================================
 // ============================================================
-// PHASE 4: PWA Install — 点击即弹原生安装对话框
+// PHASE 4: PWA — 强制可安装，所有场景兼容
 // ============================================================
 var deferredPrompt = null;
 var installBtn = document.getElementById('btnInstall');
@@ -2765,24 +2768,43 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function(){});
 }
 
+// ── 已安装检测（standalone mode）→ 隐藏按钮 ──
+if (installBtn && window.matchMedia('(display-mode: standalone)').matches) {
+  installBtn.style.display = 'none';
+}
+window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) {
+  if (installBtn) installBtn.style.display = e.matches ? 'none' : '';
+});
+
 // ── 捕获 beforeinstallprompt ──
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
-  if (installBtn) installBtn.textContent = '⬇️ 安装到桌面';
+  if (installBtn) { installBtn.textContent = '⬇️ 安装到桌面'; installBtn.disabled = false; }
 });
 
-// ── 安装成功 ──
+// ── 安装成功 → 隐藏按钮 ──
 window.addEventListener('appinstalled', function() {
   deferredPrompt = null;
-  if (installBtn) { installBtn.textContent = '✅ 已安装'; }
+  if (installBtn) { installBtn.style.display = 'none'; }
 });
 
-// ── 点击安装：直接弹原生对话框 ──
+// ── 点击安装：优先用原生对话框，失败则引导 ──
 function promptInstall() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt = null;
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    if (deferredPrompt.userChoice) {
+      deferredPrompt.userChoice.then(function(choiceResult) {
+        deferredPrompt = null;
+        if (choiceResult.outcome !== 'accepted') {
+          var retry = function(ev) { ev.preventDefault(); deferredPrompt = ev; if (installBtn) installBtn.textContent = '⬇️ 安装到桌面'; window.removeEventListener('beforeinstallprompt', retry); };
+          window.addEventListener('beforeinstallprompt', retry);
+        }
+      });
+    }
+  } else {
+    toast('ℹ️ 请使用浏览器菜单 > "安装每日对账"，或点击地址栏右侧安装图标');
+  }
 }
 // PHASE 5.2: Keyboard Shortcuts
 // ============================================================
@@ -2865,6 +2887,7 @@ window.addEventListener('beforeunload', function() {
 boot();
 </script>
 
-</body>
-</html>
 
+
+
+</body><div id="codex-browser-sidebar-comments-root" style="position: fixed; inset: 0px; pointer-events: none; z-index: 2147483000;"></div></html>
