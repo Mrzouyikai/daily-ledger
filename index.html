@@ -9,8 +9,6 @@
 <meta name="theme-color" content="#F4F1EA">
 <meta name="description" content="店铺每日记账与盈亏分析 · 热敏小票美学">
 <title>每日对账 · 热敏小票</title>
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%5Cu6bcf%5Cu65e5%5Cu5bf9%5Cu8d26%20%5Cu00b7%20%5Cu70ed%5Cu654f%5Cu5c0f%5Cu7968%22%2C%22short_name%22%3A%22%5Cu6bcf%5Cu65e5%5Cu5bf9%5Cu8d26%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F4F1EA%22%2C%22theme_color%22%3A%22%23F4F1EA%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI%2BCiAgPHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPgogIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz4KICA8cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz4KICA8cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz4KICA8dGV4dCB4PSI5NiIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyRDJEMkQiPuiusDwvdGV4dD4KPC9zdmc%2B%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+CiAgPHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPgogIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz4KICA8cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz4KICA8cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz4KICA8dGV4dCB4PSI5NiIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyRDJEMkQiPuiusDwvdGV4dD4KPC9zdmc+">
 <style>
 /* ============================================================
    PHASE 0: Design System — Thermal Receipt × Japanese Stationery
@@ -1207,6 +1205,21 @@ body.dark .cal-cell.high-rev { background: var(--blue-bg); }
   .cal-profit { font-size: 10px; }
 }
 </style>
+<script>
+(function(){
+  var r=Math.random().toString(36).slice(2,8);
+  var icon='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzNiIgZmlsbD0iI0Y0RjFFQSIvPjxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjE0NCIgaGVpZ2h0PSIxNDQiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRDJEMkQiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjM2IiB5PSI0MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIyMCIgcng9IjIiIGZpbGw9IiMyRDJEMkQiLz48cmVjdCB4PSIzNiIgeT0iNzYiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48cmVjdCB4PSIzNiIgeT0iOTYiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMiIgcng9IjIiIGZpbGw9IiM2QjZCNkIiLz48dGV4dCB4PSI5NiIgeT0iMTU2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyRDJEMkQiPuiusDwvdGV4dD48L3N2Zz4=';
+  var m={name:"每日对账 · 热敏小票",short_name:"每日对账",start_url:"./?r='+r+'",display:"standalone",background_color:"#F4F1EA",theme_color:"#F4F1EA",icons:[{src:icon,sizes:"192x192",type:"image/svg+xml"}]};
+  var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
+  var link=document.createElement("link");
+  link.rel="manifest";link.href=URL.createObjectURL(blob);
+  document.head.appendChild(link);
+  var iconLink=document.createElement("link");
+  iconLink.rel="apple-touch-icon";iconLink.href=icon;
+  document.head.appendChild(iconLink);
+})();
+</script>
+
 </head>
 <body>
 
