@@ -2,7 +2,7 @@
 // Cache-first strategy, offline support
 // 关键：不自动清理旧缓存，保持 SW 稳定 → beforeinstallprompt 能触发
 
-const CACHE_NAME = 'daily-recon-v3';
+const CACHE_NAME = 'daily-recon-v4-blue';
 const APP_FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
@@ -19,8 +19,14 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  console.log('🧾 SW activated');
-  e.waitUntil(self.clients.claim());
+  console.log('🧾 SW activated — cleaning old caches');
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', (e) => {
