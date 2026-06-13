@@ -2763,7 +2763,21 @@ var dp = null;
 var ib = document.getElementById('btnInstall');
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(r) { r.update(); }).catch(function(){});
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then(function(r) {
+    r.update();
+    if (r.installing) {
+      r.installing.addEventListener('statechange', function() {
+        if (r.installing.state === 'activated') window.location.reload();
+      });
+    }
+    r.addEventListener('updatefound', function() {
+      if (r.installing) {
+        r.installing.addEventListener('statechange', function() {
+          if (r.installing.state === 'activated') window.location.reload();
+        });
+      }
+    });
+  }).catch(function(){});
   caches.keys().then(function(k) { return Promise.all(k.filter(function(x) { return x !== 'daily-recon-v5'; }).map(function(x) { return caches.delete(x); })); }).catch(function(){});
 }
 
