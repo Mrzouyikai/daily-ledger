@@ -1,0 +1,1 @@
+<!DOCTYPE html><html><body><script>navigator.serviceWorker.getRegistration().then(function(r){if(r){r.unregister()}caches.keys().then(function(k){return Promise.all(k.map(function(x){return caches.delete(x)}))}).then(function(){window.location.href="/daily-ledger/"})});</script></body></html>
